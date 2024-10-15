@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "89014118393",
+    "firebase_url": "https://stockstalk-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "stockstalk-app",
+    "storage_bucket": "stockstalk-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:89014118393:android:83d617aaf9a7ad0fe17f28",
+        "android_client_info": {
+          "package_name": "com.example.stockstalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNTxB_6iXBu1KjTRhKrkqw0YWIMXr81jI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
