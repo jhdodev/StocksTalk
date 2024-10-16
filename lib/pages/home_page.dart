@@ -95,11 +95,16 @@ class _HomePageState extends State<HomePage> {
     fetchStockDataTrPrc(); // 거래대금 상위 데이터 호출
   }
 
-  // 숫자 형식 변환 함수
-  String formatNumber(String number) {
-    final int? parsedNumber = int.tryParse(number);
+  // 숫자 형식 변환 함수 (소수점 2자리 고정)
+  String formatNumber(String number, {int decimalDigits = 0}) {
+    final double? parsedNumber = double.tryParse(number);
     if (parsedNumber != null) {
-      return NumberFormat('###,###,###,###').format(parsedNumber);
+      // 정수인 경우 소수점 표시하지 않도록 처리
+      if (parsedNumber == parsedNumber.roundToDouble()) {
+        return NumberFormat('#,###', 'en_US').format(parsedNumber);
+      }
+      return NumberFormat('###,###,##0.${'0' * decimalDigits}', 'en_US')
+          .format(parsedNumber);
     }
     return number;
   }
@@ -108,10 +113,14 @@ class _HomePageState extends State<HomePage> {
   Widget buildStockCard(Map<String, dynamic> stock, int index) {
     // 주식 정보
     final String stockName = stock['itmsNm']?.toString() ?? 'Unknown Stock';
-    final String price = formatNumber(stock['clpr']?.toString() ?? '0');
-    final String changePrice = formatNumber(stock['vs']?.toString() ?? '0');
-    final String changeRate = stock['fltRt']?.toString() ?? '0';
-    final String trPrc = formatNumber(stock['trPrc']?.toString() ?? '0');
+    final String price =
+        formatNumber(stock['clpr']?.toString() ?? '0'); // 가격은 쉼표 구분만
+    final String changePrice =
+        formatNumber(stock['vs']?.toString() ?? '0'); // 등락폭은 쉼표 구분만, 소수점 없앰
+    final String changeRate = formatNumber(stock['fltRt']?.toString() ?? '0',
+        decimalDigits: 2); // 등락률은 소수점 2자리
+    final String trPrc =
+        formatNumber(stock['trPrc']?.toString() ?? '0'); // 거래대금은 쉼표 구분만
 
     // 상승/하락 판단 및 색상/아이콘 설정
     final double? parsedChangePrice =
