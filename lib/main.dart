@@ -6,9 +6,11 @@ import 'package:provider/provider.dart';
 import 'package:stockstalk/src/repositories/favorites_repository.dart';
 import 'package:stockstalk/src/repositories/stock_repository.dart';
 import 'package:stockstalk/src/services/stock_service.dart';
+import 'package:stockstalk/src/view_models/auth_view_model.dart';
 import 'package:stockstalk/src/view_models/favorites_view_model.dart';
 import 'package:stockstalk/src/view_models/home_view_model.dart';
 import 'package:stockstalk/src/view_models/search_view_model.dart';
+import 'package:stockstalk/src/views/pages/login_page.dart';
 import 'firebase_options.dart';
 import 'src/views/widgets/bottom_nav_bar.dart';
 import 'src/views/pages/home_page.dart';
@@ -40,6 +42,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
+          create: (_) => AuthViewModel(),
+        ),
+        ChangeNotifierProvider(
           create: (_) => HomeViewModel(stockRepository),
         ),
         ChangeNotifierProvider(
@@ -59,10 +64,17 @@ class StockstalkApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Stockstalk',
-      home: MainPage(),
+      home: Consumer<AuthViewModel>(
+        builder: (context, authViewModel, child) {
+          if (authViewModel.isLoggedIn) {
+            return const MainPage();
+          }
+          return const LoginPage();
+        },
+      ),
     );
   }
 }

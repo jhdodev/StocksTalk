@@ -1,4 +1,5 @@
-// lib/repositories/favorites_repository.dart
+// lib/src/repositories/favorites_repository.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../models/stock.dart';
 
@@ -10,22 +11,36 @@ abstract class FavoritesRepository {
 }
 
 class FirebaseFavoritesRepository implements FavoritesRepository {
-  final DatabaseReference _database =
-      FirebaseDatabase.instance.ref().child('favorites');
+  String? get userId => FirebaseAuth.instance.currentUser?.uid;
+
+  DatabaseReference _getUserFavoritesRef() {
+    if (userId == null) {
+      throw Exception('User not logged in');
+    }
+    return FirebaseDatabase.instance
+        .ref()
+        .child('users')
+        .child(userId!)
+        .child('favorites');
+  }
 
   @override
   Future<void> addFavorite(Stock stock) async {
-    await _database.child(stock.srtnCd).set(stock.toJson());
+    await _getUserFavoritesRef().child(stock.srtnCd).set(stock.toJson());
   }
 
   @override
   Future<void> removeFavorite(Stock stock) async {
-    await _database.child(stock.srtnCd).remove();
+    await _getUserFavoritesRef().child(stock.srtnCd).remove();
   }
 
   @override
   Stream<List<Stock>> getFavorites() {
-    return _database.onValue.map((event) {
+    if (userId == null) {
+      return Stream.value([]);
+    }
+
+    return _getUserFavoritesRef().onValue.map((event) {
       final dataSnapshot = event.snapshot;
       if (!dataSnapshot.exists || dataSnapshot.value == null) {
         return [];
@@ -46,7 +61,9 @@ class FirebaseFavoritesRepository implements FavoritesRepository {
 
   @override
   Future<bool> isFavorite(String stockCode) async {
-    final snapshot = await _database.child(stockCode).get();
+    if (userId == null) return false;
+
+    final snapshot = await _getUserFavoritesRef().child(stockCode).get();
     return snapshot.exists;
   }
 }
