@@ -1,5 +1,7 @@
+// lib/widgets/build_stock_section.dart
 import 'package:flutter/material.dart';
-import 'package:stockstalk/widgets/stock_card.dart';
+import 'package:stockstalk/components/stock_card.dart';
+import 'package:stockstalk/models/stock.dart'; // Stock 모델 import
 
 class BuildStockSection extends StatelessWidget {
   const BuildStockSection({
@@ -9,7 +11,7 @@ class BuildStockSection extends StatelessWidget {
   });
 
   final String title;
-  final List stockData;
+  final List<Stock> stockData; // List<dynamic>에서 List<Stock>으로 변경
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,10 @@ class BuildStockSection extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: stockData.length,
             itemBuilder: (context, index) {
-              final stock = stockData[index];
-              return StockCard(stock: stock, index: index);
+              return StockCard(
+                stock: stockData[index],
+                index: index,
+              );
             },
           ),
         ],

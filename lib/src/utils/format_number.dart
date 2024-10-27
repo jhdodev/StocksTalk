@@ -1,3 +1,4 @@
+// lib/utils/format_number.dart
 import 'package:intl/intl.dart';
 
 String formatNumber(String number, {int decimalDigits = 0}) {

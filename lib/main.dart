@@ -1,8 +1,12 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
+import 'package:stockstalk/repositories/stock_repository.dart';
+import 'package:stockstalk/services/stock_service.dart';
+import 'package:stockstalk/view_models/home_view_model.dart';
 import 'firebase_options.dart';
-import 'widgets/bottom_nav_bar.dart';
+import 'components/bottom_nav_bar.dart';
 import 'pages/home_page.dart';
 import 'pages/favorites_page.dart';
 import 'pages/search_page.dart';
@@ -20,7 +24,18 @@ void main() async {
 
   await dotenv.load(fileName: ".env");
 
-  runApp(const StockstalkApp());
+  // StockService와 Repository 인스턴스 생성
+  final stockService = StockService();
+  final stockRepository = StockRepositoryImpl(stockService);
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => HomeViewModel(stockRepository)),
+      ],
+      child: const StockstalkApp(),
+    ),
+  );
 }
 
 class StockstalkApp extends StatelessWidget {
