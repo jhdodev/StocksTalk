@@ -1,6 +1,7 @@
 // lib/models/stock.dart
 class Stock {
   final String name;
+  final String srtnCd;
   final String price;
   final String changePrice;
   final String changeRate;
@@ -8,6 +9,7 @@ class Stock {
 
   Stock({
     required this.name,
+    required this.srtnCd,
     required this.price,
     required this.changePrice,
     required this.changeRate,
@@ -22,34 +24,24 @@ class Stock {
   }
 
   factory Stock.fromJson(Map<String, dynamic> json) {
-    String formatValue(dynamic value) {
-      if (value == null) return '0';
-      return value.toString();
-    }
-
     return Stock(
       name: json['itmsNm']?.toString() ?? 'Unknown Stock',
-      price: formatValue(json['clpr']),
-      changePrice: formatValue(json['vs']),
-      changeRate: formatValue(json['fltRt']),
-      tradingVolume: formatValue(json['trPrc']),
+      srtnCd: json['srtnCd']?.toString() ?? '',
+      price: json['clpr']?.toString() ?? '0',
+      changePrice: json['vs']?.toString() ?? '0',
+      changeRate: json['fltRt']?.toString() ?? '0',
+      tradingVolume: json['trPrc']?.toString() ?? '0',
     );
   }
 
-  // Deep copy method
-  Stock copyWith({
-    String? name,
-    String? price,
-    String? changePrice,
-    String? changeRate,
-    String? tradingVolume,
-  }) {
-    return Stock(
-      name: name ?? this.name,
-      price: price ?? this.price,
-      changePrice: changePrice ?? this.changePrice,
-      changeRate: changeRate ?? this.changeRate,
-      tradingVolume: tradingVolume ?? this.tradingVolume,
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'itmsNm': name,
+      'srtnCd': srtnCd,
+      'clpr': price,
+      'vs': changePrice,
+      'fltRt': changeRate,
+      'trPrc': tradingVolume,
+    };
   }
 }

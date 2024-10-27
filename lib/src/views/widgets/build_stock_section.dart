@@ -1,7 +1,9 @@
-// lib/widgets/build_stock_section.dart
+// lib/views/widgets/build_stock_section.dart
 import 'package:flutter/material.dart';
-import 'package:stockstalk/src/views/widgets/stock_card.dart';
-import 'package:stockstalk/src/models/stock.dart'; // Stock 모델 import
+import 'package:provider/provider.dart';
+import '../../models/stock.dart';
+import '../../view_models/favorites_view_model.dart';
+import 'stock_card.dart';
 
 class BuildStockSection extends StatelessWidget {
   const BuildStockSection({
@@ -11,7 +13,7 @@ class BuildStockSection extends StatelessWidget {
   });
 
   final String title;
-  final List<Stock> stockData; // List<dynamic>에서 List<Stock>으로 변경
+  final List<Stock> stockData;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +32,16 @@ class BuildStockSection extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: stockData.length,
             itemBuilder: (context, index) {
-              return StockCard(
-                stock: stockData[index],
-                index: index,
+              final stock = stockData[index];
+              return Consumer<FavoritesViewModel>(
+                builder: (context, favoritesViewModel, _) {
+                  return StockCard(
+                    stock: stock,
+                    index: index,
+                    isFavorite: favoritesViewModel.isFavorite(stock.srtnCd),
+                    onFavoritePressed: favoritesViewModel.toggleFavorite,
+                  );
+                },
               );
             },
           ),

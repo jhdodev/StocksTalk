@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/search_view_model.dart';
+import '../../view_models/favorites_view_model.dart';
 import '../widgets/stock_card.dart';
 
 class SearchPage extends StatefulWidget {
@@ -93,24 +94,24 @@ class _SearchPageState extends State<SearchPage> {
 
           // 검색 결과 영역
           Expanded(
-            child: Consumer<SearchViewModel>(
-              builder: (context, viewModel, child) {
-                if (viewModel.isLoading) {
+            child: Consumer2<SearchViewModel, FavoritesViewModel>(
+              builder: (context, searchViewModel, favoritesViewModel, child) {
+                if (searchViewModel.isLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (viewModel.error != null) {
+                if (searchViewModel.error != null) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '오류가 발생했습니다\n${viewModel.error}',
+                          '오류가 발생했습니다\n${searchViewModel.error}',
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 16),
                         ElevatedButton(
-                          onPressed: () => viewModel.searchStocks(
+                          onPressed: () => searchViewModel.searchStocks(
                             keyword: _searchController.text,
                             marketType: _selectedMarket == '전체'
                                 ? null
@@ -123,7 +124,7 @@ class _SearchPageState extends State<SearchPage> {
                   );
                 }
 
-                if (viewModel.searchResults.isEmpty) {
+                if (searchViewModel.searchResults.isEmpty) {
                   return const Center(
                     child: Text('검색 결과가 없습니다'),
                   );
@@ -131,12 +132,14 @@ class _SearchPageState extends State<SearchPage> {
 
                 return ListView.builder(
                   padding: const EdgeInsets.all(8),
-                  itemCount: viewModel.searchResults.length,
+                  itemCount: searchViewModel.searchResults.length,
                   itemBuilder: (context, index) {
-                    final stock = viewModel.searchResults[index];
+                    final stock = searchViewModel.searchResults[index];
                     return StockCard(
                       stock: stock,
                       index: index,
+                      isFavorite: favoritesViewModel.isFavorite(stock.srtnCd),
+                      onFavoritePressed: favoritesViewModel.toggleFavorite,
                     );
                   },
                 );

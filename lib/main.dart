@@ -1,9 +1,12 @@
 // lib/main.dart
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
+import 'package:stockstalk/src/repositories/favorites_repository.dart';
 import 'package:stockstalk/src/repositories/stock_repository.dart';
 import 'package:stockstalk/src/services/stock_service.dart';
+import 'package:stockstalk/src/view_models/favorites_view_model.dart';
 import 'package:stockstalk/src/view_models/home_view_model.dart';
 import 'package:stockstalk/src/view_models/search_view_model.dart';
 import 'firebase_options.dart';
@@ -23,11 +26,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Firebase Database 초기화
+  FirebaseDatabase.instance.setPersistenceEnabled(true); // 오프라인 지원을 위한 설정
+
   await dotenv.load(fileName: ".env");
 
   // StockService와 Repository 인스턴스 생성
   final stockService = StockService();
   final stockRepository = StockRepositoryImpl(stockService);
+  final favoritesRepository = FirebaseFavoritesRepository();
 
   runApp(
     MultiProvider(
@@ -37,6 +44,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => SearchViewModel(stockRepository),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FavoritesViewModel(favoritesRepository),
         ),
       ],
       child: const StockstalkApp(),
