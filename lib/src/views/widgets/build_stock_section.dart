@@ -1,7 +1,7 @@
 // lib/widgets/build_stock_section.dart
 import 'package:flutter/material.dart';
-import 'package:stockstalk/components/stock_card.dart';
-import 'package:stockstalk/models/stock.dart'; // Stock 모델 import
+import 'package:stockstalk/src/views/widgets/stock_card.dart';
+import 'package:stockstalk/src/models/stock.dart'; // Stock 모델 import
 
 class BuildStockSection extends StatelessWidget {
   const BuildStockSection({

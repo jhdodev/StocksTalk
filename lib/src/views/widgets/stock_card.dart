@@ -1,7 +1,7 @@
 // lib/views/widgets/stock_card.dart
 import 'package:flutter/material.dart';
-import 'package:stockstalk/models/stock.dart';
-import 'package:stockstalk/utils/format_number.dart';
+import 'package:stockstalk/src/models/stock.dart';
+import 'package:stockstalk/src/utils/format_number.dart';
 
 class StockCard extends StatelessWidget {
   final Stock stock;

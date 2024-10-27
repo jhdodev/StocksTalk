@@ -2,15 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'package:stockstalk/repositories/stock_repository.dart';
-import 'package:stockstalk/services/stock_service.dart';
-import 'package:stockstalk/view_models/home_view_model.dart';
+import 'package:stockstalk/src/repositories/stock_repository.dart';
+import 'package:stockstalk/src/services/stock_service.dart';
+import 'package:stockstalk/src/view_models/home_view_model.dart';
+import 'package:stockstalk/src/view_models/search_view_model.dart';
 import 'firebase_options.dart';
-import 'components/bottom_nav_bar.dart';
-import 'pages/home_page.dart';
-import 'pages/favorites_page.dart';
-import 'pages/search_page.dart';
-import 'pages/profile_page.dart';
+import 'src/views/widgets/bottom_nav_bar.dart';
+import 'src/views/pages/home_page.dart';
+import 'src/views/pages/favorites_page.dart';
+import 'src/views/pages/search_page.dart';
+import 'src/views/pages/profile_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
@@ -31,7 +32,12 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => HomeViewModel(stockRepository)),
+        ChangeNotifierProvider(
+          create: (_) => HomeViewModel(stockRepository),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SearchViewModel(stockRepository),
+        ),
       ],
       child: const StockstalkApp(),
     ),

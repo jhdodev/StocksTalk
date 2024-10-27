@@ -1,8 +1,7 @@
 // lib/view_models/home_view_model.dart
 import 'package:flutter/foundation.dart';
-import 'package:stockstalk/repositories/stock_repository.dart';
+import 'package:stockstalk/src/repositories/stock_repository.dart';
 import '../models/stock.dart';
-import '../services/stock_service.dart';
 
 class HomeViewModel extends ChangeNotifier {
   final StockRepository _repository;

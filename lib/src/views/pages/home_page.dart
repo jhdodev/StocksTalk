@@ -1,8 +1,8 @@
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stockstalk/components/build_stock_section.dart';
-import 'package:stockstalk/view_models/home_view_model.dart';
+import 'package:stockstalk/src/views/widgets/build_stock_section.dart';
+import 'package:stockstalk/src/view_models/home_view_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
