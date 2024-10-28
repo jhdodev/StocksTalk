@@ -1,7 +1,6 @@
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stockstalk/src/services/stock_service.dart';
 import 'package:stockstalk/src/views/widgets/build_stock_section.dart';
 import 'package:stockstalk/src/view_models/home_view_model.dart';
 
@@ -14,7 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final StockService _stockService = StockService();
   bool _isFirstLoad = true; // 첫 로딩 여부를 체크하는 플래그 추가
 
   @override
