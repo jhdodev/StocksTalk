@@ -1,9 +1,11 @@
 // lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stockstalk/src/services/stock_service.dart';
 import 'package:stockstalk/src/views/widgets/build_stock_section.dart';
 import 'package:stockstalk/src/view_models/home_view_model.dart';
 
+// lib/src/views/pages/home_page.dart
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -12,26 +14,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final StockService _stockService = StockService();
+  bool _isFirstLoad = true; // 첫 로딩 여부를 체크하는 플래그 추가
+
   @override
   void initState() {
     super.initState();
-    // 데이터 로드
-    Future.microtask(() =>
-        Provider.of<HomeViewModel>(context, listen: false).fetchStockData());
+    // 약간의 딜레이를 주어 빌드 프로세스가 완료된 후 실행되도록 함
+    Future.microtask(() {
+      context.read<HomeViewModel>().fetchStockData();
+    });
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      final homeViewModel = context.read<HomeViewModel>();
+      setState(() {
+        _isFirstLoad = false; // 데이터 로딩 후 플래그 false로 변경
+      });
+      await homeViewModel.fetchStockData();
+    } catch (e) {
+      print('Error: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('종목 데이터')),
+      appBar: AppBar(
+        title: const Text('종목 데이터'),
+      ),
       body: Consumer<HomeViewModel>(
-        builder: (context, viewModel, child) {
-          if (viewModel.isLoading) {
+        builder: (context, viewModel, _) {
+          if (_isFirstLoad && viewModel.isLoading) {
+            // 첫 로딩일 때만 인디케이터 표시
             return const Center(child: CircularProgressIndicator());
-          }
-
-          if (viewModel.error != null) {
-            return Center(child: Text('Error: ${viewModel.error}'));
           }
 
           return SingleChildScrollView(
@@ -50,6 +67,10 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: context.read<HomeViewModel>().refreshStockData,
+        child: const Icon(Icons.refresh),
       ),
     );
   }
