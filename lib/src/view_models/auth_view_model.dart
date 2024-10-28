@@ -32,7 +32,7 @@ class AuthViewModel extends ChangeNotifier {
       );
     } catch (e) {
       _error = e.toString();
-      notifyListeners();
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -61,6 +61,28 @@ class AuthViewModel extends ChangeNotifier {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> sendEmailVerification() async {
+    try {
+      await _auth.currentUser?.sendEmailVerification();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+    }
+  }
+
+  // 이메일 인증 상태 새로고침
+  Future<void> reloadUser() async {
+    try {
+      await _auth.currentUser?.reload();
+      _user = _auth.currentUser;
+      notifyListeners();
     } catch (e) {
       _error = e.toString();
       notifyListeners();

@@ -1,4 +1,5 @@
 // lib/main.dart
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -67,11 +68,24 @@ class StockstalkApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Stockstalk',
-      home: Consumer<AuthViewModel>(
-        builder: (context, authViewModel, child) {
-          if (authViewModel.isLoggedIn) {
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          // 로딩 중일 때
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+
+          // 로그인 되어 있을 때
+          if (snapshot.hasData) {
             return const MainPage();
           }
+
+          // 로그인되어 있지 않을 때
           return const LoginPage();
         },
       ),

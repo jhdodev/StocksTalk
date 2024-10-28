@@ -67,15 +67,27 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () async {
-                    if (_isSignUp) {
-                      await authViewModel.signUpWithEmail(
-                        _emailController.text,
-                        _passwordController.text,
-                      );
-                    } else {
-                      await authViewModel.signInWithEmail(
-                        _emailController.text,
-                        _passwordController.text,
+                    final viewModel = context.read<AuthViewModel>();
+
+                    try {
+                      if (_isSignUp) {
+                        await viewModel.signUpWithEmail(
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+                      } else {
+                        await viewModel.signInWithEmail(
+                          _emailController.text,
+                          _passwordController.text,
+                        );
+                      }
+                    } catch (e) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('오류가 발생했습니다: $e'),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     }
                   },
