@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:stockstalk/src/views/widgets/build_stock_section.dart';
 import 'package:stockstalk/src/view_models/home_view_model.dart';
 
+//깃 테스트용 주석
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
