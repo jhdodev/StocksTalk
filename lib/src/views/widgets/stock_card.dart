@@ -1,8 +1,10 @@
 // lib/views/widgets/stock_card.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:stockstalk/src/models/stock.dart';
 import 'package:stockstalk/src/utils/format_number.dart';
+import 'package:stockstalk/src/views/pages/stock_chat_room_page.dart';
 
 class StockCard extends StatelessWidget {
   final Stock stock;
@@ -54,8 +56,7 @@ class StockCard extends StatelessWidget {
                 ),
                 Text('거래대금: ${formatNumber(stock.tradingVolume)}원',
                     style: const TextStyle(fontSize: 14)),
-
-                // 즐겨찾기 버튼 추가
+                const SizedBox(height: 8),
               ],
             ),
           ),
@@ -68,6 +69,22 @@ class StockCard extends StatelessWidget {
                 color: isFavorite ? Colors.amber : Colors.grey,
               ),
               onPressed: () => onFavoritePressed(stock),
+            ),
+          ),
+          Positioned(
+            bottom: 8,
+            right: 8,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StockChatRoomPage(stock: stock),
+                  ),
+                );
+              },
+              icon: const Icon(CupertinoIcons.chat_bubble_2_fill),
+              label: const Text('종목토론'),
             ),
           ),
         ],

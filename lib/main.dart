@@ -11,6 +11,7 @@ import 'package:stockstalk/src/view_models/auth_view_model.dart';
 import 'package:stockstalk/src/view_models/favorites_view_model.dart';
 import 'package:stockstalk/src/view_models/home_view_model.dart';
 import 'package:stockstalk/src/view_models/search_view_model.dart';
+import 'package:stockstalk/src/view_models/chat_view_model.dart';
 import 'package:stockstalk/src/views/pages/login_page.dart';
 import 'firebase_options.dart';
 import 'src/views/widgets/bottom_nav_bar.dart';
@@ -53,6 +54,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (_) => FavoritesViewModel(favoritesRepository),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ChatViewModel(),
         ),
       ],
       child: const StockstalkApp(),
