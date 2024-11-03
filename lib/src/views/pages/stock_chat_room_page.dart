@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stockstalk/src/utils/format_number.dart';
 import '../../models/chat_message.dart';
 import '../../models/stock.dart';
 import '../../view_models/chat_view_model.dart';
@@ -38,12 +39,55 @@ class _StockChatRoomPageState extends State<StockChatRoomPage> {
 
   @override
   Widget build(BuildContext context) {
+    final Color changeColor = widget.stock.isRising ? Colors.red : Colors.blue;
+    final String icon = widget.stock.isRising ? '▲' : '▼';
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.stock.name),
         backgroundColor: Colors.white,
         elevation: 0.5,
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${formatNumber(widget.stock.price)}원',
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        icon,
+                        style: TextStyle(
+                          color: changeColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                      Text(
+                        '${formatNumber(widget.stock.changeRate, decimalDigits: 2)}%',
+                        style: TextStyle(
+                          color: changeColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Consumer<ChatViewModel>(
