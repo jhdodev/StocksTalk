@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../view_models/auth_view_model.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +43,6 @@ class ProfilePage extends StatelessWidget {
               if (shouldLogout == true) {
                 // ignore: use_build_context_synchronously
                 await context.read<AuthViewModel>().signOut();
-                // 페이지 스택을 모두 지우고 로그인 페이지로 이동하는 부분 제거
               }
             },
           ),
@@ -76,28 +80,96 @@ class ProfilePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        // 이메일
+                        // 닉네임 표시
                         Text(
-                          user.email ?? '이메일 없음',
+                          user.displayName ??
+                              user.email?.split('@')[0] ??
+                              '사용자',
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        // 사용자 ID
+                        // 이메일
                         Text(
-                          '사용자 ID: ${user.uid}',
+                          user.email ?? '이메일 없음',
                           style: const TextStyle(
+                            fontSize: 14,
                             color: Colors.grey,
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 24),
+                        // 닉네임 변경 버튼
+                        ElevatedButton(
+                          onPressed: () async {
+                            final TextEditingController controller =
+                                TextEditingController(
+                              text: user.displayName ??
+                                  user.email?.split('@')[0] ??
+                                  '사용자',
+                            );
+
+                            await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('닉네임 변경'),
+                                content: TextField(
+                                  controller: controller,
+                                  decoration: const InputDecoration(
+                                    labelText: '새로운 닉네임',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('취소'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      if (controller.text.isNotEmpty) {
+                                        try {
+                                          await user.updateDisplayName(
+                                              controller.text);
+                                          await context
+                                              .read<AuthViewModel>()
+                                              .reloadUser();
+                                          if (mounted) {
+                                            Navigator.pop(context);
+                                          }
+                                        } catch (e) {
+                                          if (mounted) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                              const SnackBar(
+                                                content:
+                                                    Text('닉네임 변경에 실패했습니다.'),
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      }
+                                    },
+                                    child: const Text('변경'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 24, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: const Text('닉네임 변경'),
+                        ),
+                        const SizedBox(height: 24),
                         // 이메일 인증 상태
-                        // 이메일 인증 상태 표시부터 버튼까지 수정
                         Column(
                           children: [
-                            // 이메일 인증 상태 표시
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -120,7 +192,6 @@ class ProfilePage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            // 인증 관련 버튼들
                             if (!user.emailVerified) ...[
                               const SizedBox(height: 8),
                               Row(
